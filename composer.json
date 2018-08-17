@@ -1,0 +1,8 @@
+{
+    "name": "fanboy/woocommerce-custom-product-input-fields",
+    "description": "custom woocommerce product fields",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": "^5.3.3 || ^7.0"
+    }
+}
