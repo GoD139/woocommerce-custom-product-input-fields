@@ -45,6 +45,9 @@ class productReleased
         add_action('woocommerce_product_options_general_product_data', array( $this,'cfwc_create_custom_release_date_field') );
         add_action('woocommerce_process_product_meta', array( $this, 'add_custom_linked_release_date_field_save' ));
 
+
+	    add_shortcode( 'cpi_gameplay_video', array($this, 'custom_products_input_gameplay_video_shortcode') );
+	    add_shortcode( 'cpi_trailer_video', array($this, 'custom_products_input_trailer_video_shortcode') );
     }
 
 
@@ -85,7 +88,7 @@ class productReleased
         return false;
       }
 
-      $product_release = sanitize_text_field(wp_unslash( $_POST[ $this->trailerVideoLink ] ));
+      $product_release = $this->search_youtube_video_embed_replace(sanitize_text_field(wp_unslash( $_POST[ $this->trailerVideoLink ] )));
       update_post_meta($post_id,$this->trailerVideoLink,esc_attr( $product_release ));
     }
 
@@ -105,8 +108,39 @@ class productReleased
         return false;
       }
 
-      $product_release = sanitize_text_field(wp_unslash( $_POST[ $this->gameplayVideoLink ] ));
+      $product_release = $this->search_youtube_video_embed_replace(sanitize_text_field(wp_unslash( $_POST[ $this->gameplayVideoLink ] )));
       update_post_meta($post_id,$this->gameplayVideoLink,esc_attr( $product_release ));
     }
+
+
+
+	function custom_products_input_gameplay_video_shortcode( $atts ) {
+		if ( ! empty( get_post_meta( get_the_ID(), 'product_gameplay_video_link', true ) ) ) {
+			echo '
+		<div class="embed-responsive embed-responsive-16by9">
+							<iframe  class="embed-responsive-item" src="' . get_post_meta( get_the_ID(), 'product_gameplay_video_link', true ) . '?rel=0&controls=1&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+						</div>';
+		}
+
+
+	}
+
+	function custom_products_input_trailer_video_shortcode( $atts ) {
+		if ( ! empty( get_post_meta( get_the_ID(), 'product_trailer_video_link', true ) ) ) {
+			echo '
+		<div class="embed-responsive embed-responsive-16by9">
+							<iframe  class="embed-responsive-item" src="' . get_post_meta( get_the_ID(), 'product_trailer_video_link', true ) . '?rel=0&controls=1&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+						</div>';
+		}
+
+
+	}
+
+	function search_youtube_video_embed_replace($string){
+    	return str_replace('watch?v=','embed/',$string);
+
+
+	}
+
 
 }
