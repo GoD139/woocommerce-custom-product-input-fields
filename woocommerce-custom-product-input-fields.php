@@ -22,12 +22,14 @@ class productReleased
   private $releaseDate_id;
   private $trailerVideoLink;
   private $gameplayVideoLink;
+  private $ETProduct;
 
     public function __construct() {
 
       $this->releaseDate_id = 'product_released_date';
       $this->trailerVideoLink = 'product_trailer_video_link';
       $this->gameplayVideoLink = 'product_gameplay_video_link';
+      $this->ETProduct = '_disable_eet';
 
 
         //create field and make it savable
@@ -44,6 +46,10 @@ class productReleased
         //Product Release date
         add_action('woocommerce_product_options_general_product_data', array( $this,'cfwc_create_custom_release_date_field') );
         add_action('woocommerce_process_product_meta', array( $this, 'add_custom_linked_release_date_field_save' ));
+        
+        //EET PRODUCT
+        add_action('woocommerce_product_options_general_product_data', array( $this,'cfwc_create_disable_eet_field') );
+        add_action('woocommerce_process_product_meta', array( $this, 'add_custom_disable_eet_field_save' ));
 
 
 	    add_shortcode( 'cpi_gameplay_video', array($this, 'custom_products_input_gameplay_video_shortcode') );
@@ -114,6 +120,37 @@ class productReleased
 
 
 
+
+
+
+    function cfwc_create_disable_eet_field() {
+      
+      woocommerce_wp_checkbox( array(
+        'id' => $this->ETProduct,
+        'label' => __( 'Disable ET product', 'cfwc' ), 
+        'class' => 'cfwc-custom-field', 
+        'desc_tip' => true, 
+        'description' => __( 'Does so ET don\'t update weight/price', 'ctwc' )
+    ));
+      
+     // $args = array( 'id' => $this->ETProduct, 'label' => __( 'Is ET product', 'cfwc' ), 'class' => 'cfwc-custom-field', 'type' => 'checkbox', 'desc_tip' => true, 'description' => __( 'Indicates its an ET product', 'ctwc' ), );
+     // woocommerce_wp_text_input( $args );
+    }
+
+
+    public function add_custom_disable_eet_field_save( $post_id ) {
+      $engrave_text_option = isset( $_POST[ $this->ETProduct ] ) ? 'yes' : 'no';
+      update_post_meta($post_id,$this->ETProduct,esc_attr( $engrave_text_option ));
+    }
+
+
+
+
+
+
+
+
+
 	function custom_products_input_gameplay_video_shortcode( $atts ) {
 		if ( ! empty( get_post_meta( get_the_ID(), 'product_gameplay_video_link', true ) ) ) {
 			echo '
@@ -138,9 +175,10 @@ class productReleased
 
 	function search_youtube_video_embed_replace($string){
     	return str_replace('watch?v=','embed/',$string);
-
-
 	}
+
+
+  
 
 
 }
