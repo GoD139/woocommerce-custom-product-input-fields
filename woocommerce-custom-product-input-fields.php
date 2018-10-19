@@ -153,7 +153,7 @@ class productReleased
 
 	function custom_products_input_gameplay_video_shortcode( $atts ) {
 		if ( ! empty( get_post_meta( get_the_ID(), 'product_gameplay_video_link', true ) ) ) {
-			echo '
+			echo '<span class="gameplay_video_single_product"><h3>Gameplay</h3></span>
 		<div class="embed-responsive embed-responsive-16by9">
 							<iframe  class="embed-responsive-item" src="' . get_post_meta( get_the_ID(), 'product_gameplay_video_link', true ) . '?rel=0&controls=1&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 						</div>';
@@ -164,7 +164,7 @@ class productReleased
 
 	function custom_products_input_trailer_video_shortcode( $atts ) {
 		if ( ! empty( get_post_meta( get_the_ID(), 'product_trailer_video_link', true ) ) ) {
-			echo '
+			echo '<span class="gameplay_video_single_product"><h3>Trailer</h3></span>
 		<div class="embed-responsive embed-responsive-16by9">
 							<iframe  class="embed-responsive-item" src="' . get_post_meta( get_the_ID(), 'product_trailer_video_link', true ) . '?rel=0&controls=1&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 						</div>';
