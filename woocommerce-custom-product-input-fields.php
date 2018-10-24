@@ -23,6 +23,8 @@ class productReleased
   private $trailerVideoLink;
   private $gameplayVideoLink;
   private $ETProduct;
+  private $noMarkup;
+  private $shippingCost;
 
     public function __construct() {
 
@@ -30,6 +32,8 @@ class productReleased
       $this->trailerVideoLink = 'product_trailer_video_link';
       $this->gameplayVideoLink = 'product_gameplay_video_link';
       $this->ETProduct = '_disable_eet';
+      $this->shippingCost = '_shipping_cost';
+      
 
 
         //create field and make it savable
@@ -51,9 +55,13 @@ class productReleased
         add_action('woocommerce_product_options_general_product_data', array( $this,'cfwc_create_disable_eet_field') );
         add_action('woocommerce_process_product_meta', array( $this, 'add_custom_disable_eet_field_save' ));
 
+        //shipping cost
+        add_action('woocommerce_product_options_general_product_data', array( $this,'cfwc_create_shipping_cost_field') );
+        add_action('woocommerce_process_product_meta', array( $this, 'add_custom_shipping_cost_field_save' ));
 
-	    add_shortcode( 'cpi_gameplay_video', array($this, 'custom_products_input_gameplay_video_shortcode') );
-	    add_shortcode( 'cpi_trailer_video', array($this, 'custom_products_input_trailer_video_shortcode') );
+
+  	    add_shortcode( 'cpi_gameplay_video', array($this, 'custom_products_input_gameplay_video_shortcode') );
+  	    add_shortcode( 'cpi_trailer_video', array($this, 'custom_products_input_trailer_video_shortcode') );
     }
 
 
@@ -96,6 +104,25 @@ class productReleased
 
       $product_release = $this->search_youtube_video_embed_replace(sanitize_text_field(wp_unslash( $_POST[ $this->trailerVideoLink ] )));
       update_post_meta($post_id,$this->trailerVideoLink,esc_attr( $product_release ));
+    }
+    
+    
+    
+    
+    function cfwc_create_shipping_cost_field() {
+     $args = array( 'id' => $this->shippingCost, 'label' => __( 'Shipping cost', 'cfwc' ), 'class' => 'cfwc-custom-field', 'type' => 'text', 'desc_tip' => true, 'description' => __( 'Enter shipping cost', 'ctwc' ), );
+     woocommerce_wp_text_input( $args );
+    }
+
+
+    public function add_custom_shipping_cost_field_save( $post_id ) {
+
+      if ( !( isset( $_POST['woocommerce_meta_nonce'], $_POST[ $this->shippingCost ] ) || wp_verify_nonce( sanitize_key( $_POST['woocommerce_meta_nonce'] ), 'woocommerce_save_data' ) ) ) {
+        return false;
+      }
+
+      $product_release = $this->search_youtube_video_embed_replace(sanitize_text_field(wp_unslash( $_POST[ $this->shippingCost ] )));
+      update_post_meta($post_id,$this->shippingCost,esc_attr( $product_release ));
     }
 
 
@@ -142,6 +169,11 @@ class productReleased
       $engrave_text_option = isset( $_POST[ $this->ETProduct ] ) ? 'yes' : 'no';
       update_post_meta($post_id,$this->ETProduct,esc_attr( $engrave_text_option ));
     }
+    
+    
+    
+    
+    
 
 
 
@@ -153,7 +185,7 @@ class productReleased
 
 	function custom_products_input_gameplay_video_shortcode( $atts ) {
 		if ( ! empty( get_post_meta( get_the_ID(), 'product_gameplay_video_link', true ) ) ) {
-			echo '<span class="gameplay_video_single_product"><h3>Gameplay</h3></span>
+			echo '
 		<div class="embed-responsive embed-responsive-16by9">
 							<iframe  class="embed-responsive-item" src="' . get_post_meta( get_the_ID(), 'product_gameplay_video_link', true ) . '?rel=0&controls=1&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 						</div>';
@@ -164,7 +196,7 @@ class productReleased
 
 	function custom_products_input_trailer_video_shortcode( $atts ) {
 		if ( ! empty( get_post_meta( get_the_ID(), 'product_trailer_video_link', true ) ) ) {
-			echo '<span class="gameplay_video_single_product"><h3>Trailer</h3></span>
+			echo '
 		<div class="embed-responsive embed-responsive-16by9">
 							<iframe  class="embed-responsive-item" src="' . get_post_meta( get_the_ID(), 'product_trailer_video_link', true ) . '?rel=0&controls=1&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 						</div>';
