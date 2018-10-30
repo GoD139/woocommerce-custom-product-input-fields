@@ -154,7 +154,7 @@ class productReleased
       
       woocommerce_wp_checkbox( array(
         'id' => $this->ETProduct,
-        'label' => __( 'Disable ET product', 'cfwc' ), 
+        'label' => __( 'Disable ET product info', 'cfwc' ), 
         'class' => 'cfwc-custom-field', 
         'desc_tip' => true, 
         'description' => __( 'Does so ET don\'t update weight/price', 'ctwc' )
